@@ -43,10 +43,9 @@ uses
 
 {$R *.dfm}
 
-
 procedure TfrPrincipal.btnAdicionarClick(Sender: TObject);
 begin
-  frExcessoes := FrExcessoes.Create(Nil);
+  frExcessoes := TfrExcessoes.Create(Self);
   frExcessoes.ShowModal;
   frExcessoes.Release;
 end;
