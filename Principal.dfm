@@ -12,7 +12,6 @@ object frPrincipal: TfrPrincipal
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
@@ -33,14 +32,14 @@ object frPrincipal: TfrPrincipal
   object edtDiretorio: TEdit
     Left = 34
     Top = 53
-    Width = 321
+    Width = 496
     Height = 21
     TabOrder = 0
     Text = 'D:\FontesSVN\Mobile\MaisPedRapido'
   end
   object chkSub: TCheckBox
-    Left = 370
-    Top = 55
+    Left = 34
+    Top = 75
     Width = 97
     Height = 17
     Caption = 'Incluir Subpastas'
@@ -75,18 +74,22 @@ object frPrincipal: TfrPrincipal
     TabOrder = 4
     Visible = False
   end
-  object vPanelAnimation: TPanel
-    Left = 370
-    Top = 289
-    Width = 185
-    Height = 41
-    Caption = 'vPanelAnimation'
-    ShowCaption = False
+  object btnSelecionaPasta: TButton
+    Left = 536
+    Top = 51
+    Width = 75
+    Height = 25
+    Caption = 'Pasta...'
     TabOrder = 5
-    Visible = False
-    object vIndicator: TActivityIndicator
-      Left = 80
-      Top = 8
-    end
+    OnClick = btnSelecionaPastaClick
+  end
+  object btnAdicionar: TButton
+    Left = 480
+    Top = 286
+    Width = 131
+    Height = 25
+    Caption = '&Adicionar Excess'#245'es'
+    TabOrder = 6
+    OnClick = btnAdicionarClick
   end
 end

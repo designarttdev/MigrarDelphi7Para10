@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, FileCtrl;
 
 type
   TfrPrincipal = class(TForm)
@@ -19,15 +19,16 @@ type
     memLista: TMemo;
     btnListar: TButton;
     memoArquivos: TMemo;
-    vPanelAnimation: TPanel;
-    vIndicator: TActivityIndicator;
+    btnSelecionaPasta: TButton;
+    btnAdicionar: TButton;
+    procedure btnAdicionarClick(Sender: TObject);
     procedure btnListarClick(Sender: TObject);
+    procedure btnSelecionaPastaClick(Sender: TObject);
   private
     procedure ReplaceMemo;
     { Private declarations }
   public
     { Public declarations }
-    procedure AtivaAnimacao;
     procedure ListarArquivos(Diretorio : String; Sub:Boolean);
     function TemAtributo(Attr, Val: Integer): Boolean;
   end;
@@ -38,52 +39,32 @@ var
 implementation
 
 uses
-  DataModule;
+  DataModule, Excessoes;
 
 {$R *.dfm}
 
-procedure TfrPrincipal.AtivaAnimacao;
+
+procedure TfrPrincipal.btnAdicionarClick(Sender: TObject);
 begin
-  {$REGION 'Cria Panel'}
-
-//    vPanelAnimation        := TPanel.Create(self);
-    vPanelAnimation.Visible := True;
-    vPanelAnimation.Parent  := frPrincipal;
-    vPanelAnimation.Height  := FrPrincipal.ClientHeight;
-    vPanelAnimation.Width   := FrPrincipal.ClientWidth;
-    vPanelAnimation.Top     := 0;
-    vPanelAnimation.Left    := 0;
-    vPanelAnimation.BringToFront;
-
-  {$ENDREGION}
-
-  {$REGION 'Cria Animação'}
-
-    //usar a classe "Vcl.WinXCtrls" no Uses para usar este componente
-//    vIndicator                := TActivityIndicator.Create(self);
-    vIndicator.Parent         := vPanelAnimation;
-    vIndicator.IndicatorSize  := aisXLarge;
-    vIndicator.FrameDelay     := 40;
-    vIndicator.Animate        := True;
-    vIndicator.IndicatorType  := aitMomentumDots;
-    vIndicator.IndicatorColor := aicBlack;
-
-  {$ENDREGION}
-
-  {$REGION 'Centraliza componentes'}
-
-    vIndicator.Left := Trunc((vPanelAnimation.ClientWidth / 2) - (vIndicator.Width / 2));
-    vIndicator.top  := Trunc((vPanelAnimation.ClientHeight / 2) - (vIndicator.Height / 2));
-
-  {$ENDREGION}
-
-End;
+  frExcessoes := FrExcessoes.Create(Nil);
+  frExcessoes.ShowModal;
+  frExcessoes.Release;
+end;
 
 procedure TfrPrincipal.btnListarClick(Sender: TObject);
 begin
   memLista.Lines.Clear;
 
   ListarArquivos(edtDiretorio.Text, chkSub.Checked);
+end;
+
+procedure TfrPrincipal.btnSelecionaPastaClick(Sender: TObject);
+var
+  selDir : String;
+begin
+  //tem que declarar na Uses do projeto a Unit "FileCtrl"
+  SelectDirectory('Selecione uma pasta', '', selDir);
+  edtDiretorio.Text := selDir;
 end;
 
 procedure TfrPrincipal.ListarArquivos(Diretorio : String; Sub:Boolean);
@@ -98,10 +79,10 @@ var
   vHoraIni : TDateTime;
 begin
 
-  vHoraIni := Now;
+  vHoraIni             := Now;
   edtDiretorio.Enabled := False;
   btnListar.Enabled    := False;
-  lblArquivos.Caption := 'Aguarde até o final do processo';
+  lblArquivos.Caption  := 'Aguarde até o final do processo';
 
   dmPrincipal.vQuery.Connection := dmPrincipal.conn;
   dmPrincipal.vQuery.Close;

@@ -8,12 +8,16 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs, FireDAC.VCLUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.SQLiteWrapper.Stat;
 
 type
   TdmPrincipal = class(TDataModule)
     conn: TFDConnection;
     vQuery: TFDQuery;
+    vQueryTodos: TFDQuery;
+    vQueryTodosANTES: TStringField;
+    vQueryTodosDEPOIS: TStringField;
+    dsTodos: TDataSource;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
@@ -28,7 +32,7 @@ var
 implementation
 
 uses
-  Vcl.Forms;
+  Vcl.Forms, Excessoes, Principal;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
