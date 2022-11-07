@@ -17,11 +17,16 @@ type
     GrAcesso: TDBGrid;
     lblAnteriorE: TLabel;
     lblDepoisE: TLabel;
+    btnInserir: TButton;
     procedure btnCancelarClick(Sender: TObject);
     procedure btnExcluirClick(Sender: TObject);
     procedure btnGravarClick(Sender: TObject);
+    procedure btnInserirClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure GrAcessoCellClick(Column: TColumn);
+    procedure GrAcessoDblClick(Sender: TObject);
   private
+    vId : Integer;
     procedure AjustarColunas(DBGrid: TDBgrid);
     { Private declarations }
   public
@@ -112,6 +117,8 @@ end;
 
 procedure TfrExcessoes.btnCancelarClick(Sender: TObject);
 begin
+  btnInserir.Enabled := True;
+
   edtAnterior.Clear;
   edtDepois.Clear;
   edtAnterior.SetFocus;
@@ -119,15 +126,52 @@ begin
 end;
 
 procedure TfrExcessoes.btnExcluirClick(Sender: TObject);
+var
+  i, id : Integer;
 begin
-//  dmPrincipal.vQuery.Connection := dmPrincipal.conn;
-//  dmPrincipal.vQuery.Close;
-//  dmPrincipal.vQuery.Sql.Clear;
-//  dmPrincipal.vQuery.Sql.Add('DELETE FROM CONVERSAO WHERE id = ' + GrAcesso.SelectedRows );
-//  dmPrincipal.vQuery.ExecSQL;
+  try
+    dmPrincipal.vQuery.Connection := dmPrincipal.conn;
+    dmPrincipal.vQuery.Close;
+    dmPrincipal.vQuery.Sql.Clear;
+    dmPrincipal.vQuery.Sql.Add('DELETE FROM CONVERSAO WHERE id = :ID');
+    dmPrincipal.vQuery.ParamByName('ID').AsInteger := vId;
+    dmPrincipal.vQuery.ExecSQL;
+    FormShow(Nil);
+  except on E:Exception do
+    begin
+      Application.MessageBox('Não foi possível excluir.', 'Atenção!', MB_OK +
+        MB_ICONSTOP);
+      Exit;
+    end;
+  end;
 end;
 
 procedure TfrExcessoes.btnGravarClick(Sender: TObject);
+begin
+
+  try
+    dmPrincipal.vQuery.Close;
+    dmPrincipal.vQuery.Sql.Clear;
+    dmPrincipal.vQuery.Sql.Add('UPDATE CONVERSAO SET ANTES = :ANTES, DEPOIS = :DEPOIS WHERE ID = :ID');
+    dmPrincipal.vQuery.ParamByName('ID').AsInteger    := dmPrincipal.vQueryTodosID.AsInteger;
+    dmPrincipal.vQuery.ParamByName('ANTES').AsString  := Trim(edtAnterior.Text);
+    dmPrincipal.vQuery.ParamByName('DEPOIS').AsString := Trim(edtDepois.Text);
+    dmPrincipal.vQuery.ExecSQL;
+
+    FormShow(nil);
+    btnInserir.Enabled := True;
+  except on E:Exception do
+    begin
+      Application.MessageBox('Não foi possível alterar.', 'Atenção!', MB_OK +
+        MB_ICONSTOP);
+      btnCancelarClick(nil);
+      Exit;
+    end;
+  end;
+
+end;
+
+procedure TfrExcessoes.btnInserirClick(Sender: TObject);
 var
   vProximoNumero : Integer;
 begin
@@ -140,15 +184,36 @@ begin
 
   vProximoNumero := dmPrincipal.vQuery.FieldByName('proximonumero').AsInteger;
 
-  dmPrincipal.vQuery.Close;
-  dmPrincipal.vQuery.Sql.Clear;
-  dmPrincipal.vQuery.Sql.Add('INSERT INTO CONVERSAO(ID, ANTES, DEPOIS) VALUES (:ID, :ANTES, :DEPOIS);');
-  dmPrincipal.vQuery.ParamByName('ID').AsInteger    := vProximoNumero;
-  dmPrincipal.vQuery.ParamByName('ANTES').AsString  := Trim(edtAnterior.Text);
-  dmPrincipal.vQuery.ParamByName('DEPOIS').AsString := Trim(edtDepois.Text);
-  dmPrincipal.vQuery.ExecSQL;
+  try
+    dmPrincipal.vQuery.Close;
+    dmPrincipal.vQuery.Sql.Clear;
+    dmPrincipal.vQuery.Sql.Add('INSERT INTO CONVERSAO(ID, ANTES, DEPOIS) VALUES (:ID, :ANTES, :DEPOIS);');
+    dmPrincipal.vQuery.ParamByName('ID').AsInteger    := vProximoNumero;
+    dmPrincipal.vQuery.ParamByName('ANTES').AsString  := Trim(edtAnterior.Text);
+    dmPrincipal.vQuery.ParamByName('DEPOIS').AsString := Trim(edtDepois.Text);
+    dmPrincipal.vQuery.ExecSQL;
 
-  FormShow(nil);
+    FormShow(nil);
+  except on E:Exception do
+    begin
+      Application.MessageBox('Não foi possível Inserir.', 'Atenção!', MB_OK +
+        MB_ICONSTOP);
+      Exit;
+    end;
+  end;
+end;
+
+procedure TfrExcessoes.GrAcessoCellClick(Column: TColumn);
+begin
+  vId := dmPrincipal.vQueryTodosID.AsInteger;
+end;
+
+procedure TfrExcessoes.GrAcessoDblClick(Sender: TObject);
+begin
+  btnInserir.Enabled := False;
+
+  edtAnterior.Text := Trim(dmPrincipal.vQueryTodosANTES.AsString);
+  edtDepois.Text   := Trim(dmPrincipal.vQueryTodosDEPOIS.AsString);
 end;
 
 end.

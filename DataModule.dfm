@@ -1,8 +1,8 @@
 object dmPrincipal: TdmPrincipal
+  OldCreateOrder = True
   OnCreate = DataModuleCreate
   Height = 277
   Width = 355
-  PixelsPerInch = 96
   object conn: TFDConnection
     Params.Strings = (
       'OpenMode=ReadWrite'
@@ -23,6 +23,9 @@ object dmPrincipal: TdmPrincipal
     Connection = conn
     Left = 160
     Top = 41
+    object vQueryTodosID: TIntegerField
+      FieldName = 'ID'
+    end
     object vQueryTodosANTES: TStringField
       FieldName = 'ANTES'
       Size = 500

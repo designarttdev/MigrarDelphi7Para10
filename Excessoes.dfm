@@ -12,6 +12,7 @@ object frExcessoes: TfrExcessoes
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
+  OldCreateOrder = True
   Position = poScreenCenter
   OnShow = FormShow
   PixelsPerInch = 96
@@ -45,7 +46,7 @@ object frExcessoes: TfrExcessoes
     TabOrder = 1
   end
   object btnGravar: TButton
-    Left = 272
+    Left = 315
     Top = 136
     Width = 75
     Height = 25
@@ -54,7 +55,7 @@ object frExcessoes: TfrExcessoes
     OnClick = btnGravarClick
   end
   object btnExcluir: TButton
-    Left = 446
+    Left = 491
     Top = 136
     Width = 75
     Height = 25
@@ -63,7 +64,7 @@ object frExcessoes: TfrExcessoes
     OnClick = btnExcluirClick
   end
   object btnCancelar: TButton
-    Left = 359
+    Left = 403
     Top = 136
     Width = 75
     Height = 25
@@ -77,14 +78,21 @@ object frExcessoes: TfrExcessoes
     Width = 761
     Height = 249
     DataSource = dmPrincipal.dsTodos
-    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 5
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -12
     TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
+    OnCellClick = GrAcessoCellClick
+    OnDblClick = GrAcessoDblClick
     Columns = <
+      item
+        Expanded = False
+        FieldName = 'ID'
+        Visible = True
+      end
       item
         Expanded = False
         FieldName = 'ANTES'
@@ -93,7 +101,17 @@ object frExcessoes: TfrExcessoes
       item
         Expanded = False
         FieldName = 'DEPOIS'
+        Width = 64
         Visible = True
       end>
+  end
+  object btnInserir: TButton
+    Left = 227
+    Top = 136
+    Width = 75
+    Height = 25
+    Caption = 'Inserir'
+    TabOrder = 6
+    OnClick = btnInserirClick
   end
 end

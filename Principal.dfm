@@ -12,6 +12,7 @@ object frPrincipal: TfrPrincipal
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
+  OldCreateOrder = True
   Position = poScreenCenter
   PixelsPerInch = 96
   TextHeight = 13
@@ -61,6 +62,8 @@ object frPrincipal: TfrPrincipal
     Width = 105
     Height = 25
     Caption = '&Converter'
+    HotImageIndex = 1
+    ImageIndex = 1
     TabOrder = 3
     OnClick = btnListarClick
   end
@@ -89,6 +92,8 @@ object frPrincipal: TfrPrincipal
     Width = 131
     Height = 25
     Caption = '&Adicionar Excess'#245'es'
+    HotImageIndex = 0
+    ImageIndex = 0
     TabOrder = 6
     OnClick = btnAdicionarClick
   end

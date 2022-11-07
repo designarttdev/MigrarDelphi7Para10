@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite,
   FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs, FireDAC.VCLUI.Wait,
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt, Data.DB,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Phys.SQLiteWrapper.Stat;
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   TdmPrincipal = class(TDataModule)
@@ -18,6 +18,7 @@ type
     vQueryTodosANTES: TStringField;
     vQueryTodosDEPOIS: TStringField;
     dsTodos: TDataSource;
+    vQueryTodosID: TIntegerField;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }

@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, FileCtrl;
+  FireDAC.Comp.Client, FileCtrl, ShellApi, System.ImageList, Vcl.ImgList;
 
 type
   TfrPrincipal = class(TForm)
@@ -25,7 +25,8 @@ type
     procedure btnListarClick(Sender: TObject);
     procedure btnSelecionaPastaClick(Sender: TObject);
   private
-    procedure ReplaceMemo;
+    function ReplaceMemo(vString : String) : String;
+    function SelectADirectory(Title: string): string;
     { Private declarations }
   public
     { Public declarations }
@@ -57,13 +58,36 @@ begin
   ListarArquivos(edtDiretorio.Text, chkSub.Checked);
 end;
 
+function TfrPrincipal.SelectADirectory(Title : string) : string;
+var
+  Pasta : String;
+begin
+  SelectDirectory(Title, '', Pasta);
+
+  if (Trim(Pasta) <> '') then
+    if (Pasta[Length(Pasta)] <> '\') then
+      Pasta := Pasta + '\';
+
+  Result := Pasta;
+end;
+
 procedure TfrPrincipal.btnSelecionaPastaClick(Sender: TObject);
 var
   selDir : String;
 begin
   //tem que declarar na Uses do projeto a Unit "FileCtrl"
-  SelectDirectory('Selecione uma pasta', '', selDir);
-  edtDiretorio.Text := selDir;
+//  SelectDirectory('Selecione uma pasta', '', selDir);
+
+  with TFileOpenDialog.Create(nil) do
+  try
+    Options := [fdoPickFolders];
+    if Execute then
+      edtDiretorio.Text := FileName;
+  finally
+    Free;
+  end;
+
+
 end;
 
 procedure TfrPrincipal.ListarArquivos(Diretorio : String; Sub:Boolean);
@@ -78,10 +102,12 @@ var
   vHoraIni : TDateTime;
 begin
 
-  vHoraIni             := Now;
-  edtDiretorio.Enabled := False;
-  btnListar.Enabled    := False;
-  lblArquivos.Caption  := 'Aguarde até o final do processo';
+  vHoraIni                  := Now;
+  edtDiretorio.Enabled      := False;
+  btnListar.Enabled         := False;
+  btnAdicionar.Enabled      := False;
+  btnSelecionaPasta.Enabled := False;
+  lblArquivos.Caption       := 'Aguarde até o final do processo';
 
   dmPrincipal.vQuery.Connection := dmPrincipal.conn;
   dmPrincipal.vQuery.Close;
@@ -126,7 +152,7 @@ begin
               Application.ProcessMessages;
               ReadLn(ArqTxt, sLinha);
               fArq.Add(sLinha);
-              memoArquivos.Lines.Add(sLinha);
+              memoArquivos.Lines.Add(ReplaceMemo(sLinha));
             end;
 
             CloseFile(ArqTxt);
@@ -162,7 +188,7 @@ begin
 
             {$EndRegion}
 
-            ReplaceMemo;
+//            ReplaceMemo;
 
             if not DirectoryExists(Diretorio + '\Convertido') then
               CreateDir(Diretorio + '\Convertido');
@@ -183,9 +209,11 @@ begin
     end;
   {$ENDREGION}
 
-  edtDiretorio.Enabled := True;
-  btnListar.Enabled    := True;
-  lblArquivos.Caption := 'Arquivos - Concluído';
+  edtDiretorio.Enabled      := True;
+  btnListar.Enabled         := True;
+  btnAdicionar.Enabled      := True;
+  btnSelecionaPasta.Enabled := True;
+  lblArquivos.Caption       := 'Arquivos - Concluído';
   vHoraFim := FormatDateTime('hh:MM:ss', (Now - vHoraIni));
   Application.MessageBox(pWideChar('Concluído em '+vHoraFim+' min ! ☺'), 'Atenção!', MB_OK + MB_ICONWARNING);
 
@@ -196,21 +224,24 @@ begin
   Result := Attr and Val = Val;
 end;
 
-procedure TfrPrincipal.ReplaceMemo;
+function TfrPrincipal.ReplaceMemo(vString : String) : String;
 var
   I : Integer;
 begin
+
   try
     dmPrincipal.vQuery.First;
     for I := 0 to dmPrincipal.vQuery.RecordCount - 1 do
     begin
       Application.ProcessMessages;
-      memoArquivos.Lines.Text := memoArquivos.Lines.Text.Replace(dmPrincipal.vQuery.FieldByName('ANTES').AsString, dmPrincipal.vQuery.FieldByName('DEPOIS').AsString);
+      vString := StringReplace(vString, Trim(dmPrincipal.vQuery.FieldByName('ANTES').AsString), Trim(dmPrincipal.vQuery.FieldByName('DEPOIS').AsString), [rfReplaceAll, rfIgnoreCase]);
       dmPrincipal.vQuery.Next;
     end;
+    Result := vString;
   except on e:Exception do
     begin
-      ShowMessage('Deu erro aqui');
+      Result := '';
+      ShowMessage('Deu erro ao usar o replace');
     end;
   end;
 end;
