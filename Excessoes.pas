@@ -194,6 +194,10 @@ begin
     dmPrincipal.vQuery.ExecSQL;
 
     FormShow(nil);
+
+    edtAnterior.Clear;
+    edtDepois.Clear;
+    edtAnterior.SetFocus;
   except on E:Exception do
     begin
       Application.MessageBox('Não foi possível Inserir.', 'Atenção!', MB_OK +
