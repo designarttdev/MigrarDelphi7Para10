@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, FileCtrl, ShellApi, System.ImageList, Vcl.ImgList;
+  FireDAC.Comp.Client, FileCtrl, ShellApi, System.ImageList, Vcl.ImgList, IniFiles;
 
 type
   TfrPrincipal = class(TForm)
@@ -24,9 +24,12 @@ type
     procedure btnAdicionarClick(Sender: TObject);
     procedure btnListarClick(Sender: TObject);
     procedure btnSelecionaPastaClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     function ReplaceMemo(vString : String) : String;
     function SelectADirectory(Title: string): string;
+    procedure SalvarCaminhoPasta(EditCaminho: TEdit);
+    procedure CarregarCaminhoPasta(EditCaminho: TEdit);
     { Private declarations }
   public
     { Public declarations }
@@ -54,8 +57,10 @@ end;
 procedure TfrPrincipal.btnListarClick(Sender: TObject);
 begin
   memLista.Lines.Clear;
+  SalvarCaminhoPasta(edtDiretorio);
 
   ListarArquivos(edtDiretorio.Text, chkSub.Checked);
+
 end;
 
 function TfrPrincipal.SelectADirectory(Title : string) : string;
@@ -81,8 +86,12 @@ begin
   with TFileOpenDialog.Create(nil) do
   try
     Options := [fdoPickFolders];
+    DefaultFolder := Trim(edtDiretorio.Text);
     if Execute then
+    begin
       edtDiretorio.Text := FileName;
+      SalvarCaminhoPasta(edtDiretorio);
+    end;
   finally
     Free;
   end;
@@ -137,7 +146,8 @@ begin
         begin
           memLista.Lines.Add(Diretorio+'\'+F.Name);
 
-          if (pos('.pas', Diretorio+'\'+F.Name) > 0) or (pos('.dfm', Diretorio+'\'+F.Name) > 0) then
+//          if (pos('.pas', Diretorio+'\'+F.Name) > 0) or (pos('.dfm', Diretorio+'\'+F.Name) > 0) then
+          if (ExtractFileExt(F.Name) = '.pas') or (ExtractFileExt(F.Name) = '.dfm') then
           begin
 
             AssignFile(ArqTxt, Diretorio+'\'+F.Name);
@@ -244,6 +254,35 @@ begin
       ShowMessage('Deu erro ao usar o replace');
     end;
   end;
+end;
+
+procedure TfrPrincipal.SalvarCaminhoPasta(EditCaminho: TEdit);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.ini'));
+  try
+    Ini.WriteString('Config', 'CaminhoPasta', EditCaminho.Text);
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TfrPrincipal.CarregarCaminhoPasta(EditCaminho: TEdit);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.ini'));
+  try
+    EditCaminho.Text := Ini.ReadString('Config', 'CaminhoPasta', '');
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure TfrPrincipal.FormShow(Sender: TObject);
+begin
+  CarregarCaminhoPasta(edtDiretorio);
 end;
 
 end.

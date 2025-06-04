@@ -14,6 +14,7 @@ object frPrincipal: TfrPrincipal
   KeyPreview = True
   OldCreateOrder = True
   Position = poScreenCenter
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object lblOrigem: TLabel
