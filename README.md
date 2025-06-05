@@ -67,6 +67,8 @@ git clone https://github.com/designarttdev/MigrarDelphi7Para10.git
 3. Se nenhum arquivo `.dpr` for encontrado, o programa perguntará se deseja prosseguir mesmo assim.
 4. Ao pressionar **Converter**, os arquivos `.pas` e `.dfm` convertidos são salvos na subpasta `Convertido`.
 5. As conversões são baseadas na tabela `CONVERSAO` do banco `Bin/Banco/Banco.db`.
+   Certifique-se de que esta tabela possua registros mapeando os tipos antigos para
+   os novos. O programa avisa caso a tabela esteja vazia.
 6. Abra o projeto na pasta `Convertido` com o Delphi 10+ e finalize os ajustes necessários.
 
 ---

@@ -140,6 +140,13 @@ begin
   dmPrincipal.vQuery.Sql.Clear;
   dmPrincipal.vQuery.Sql.Add('SELECT * FROM CONVERSAO');
   dmPrincipal.vQuery.Open;
+  if dmPrincipal.vQuery.IsEmpty then
+  begin
+    Application.MessageBox('A tabela CONVERSAO n\xe3o possui registros. ' +
+      'Defina as convers\xf5es no banco de dados para prosseguir.',
+      'Aten\xe7\xe3o!', MB_OK + MB_ICONSTOP);
+    Exit;
+  end;
 
   {$REGION 'Processo conversão'}
     Ret := FindFirst(Diretorio+'\*.*', faAnyFile, F);
