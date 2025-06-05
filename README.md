@@ -61,6 +61,14 @@ git clone https://github.com/designarttdev/MigrarDelphi7Para10.git
   - Exemplo: TADConnection -> TFDConnection
 - Facilidade em alterar as palavras em todo o projeto.
 
+### Como converter um projeto Delphi 7
+1. Execute o aplicativo `MigrarDelphi7Para10`.
+2. Clique em **Pasta...** e escolha o diretório do projeto em Delphi 7.
+3. Se nenhum arquivo `.dpr` for encontrado, o programa perguntará se deseja prosseguir mesmo assim.
+4. Ao pressionar **Converter**, os arquivos `.pas` e `.dfm` convertidos são salvos na subpasta `Convertido`.
+5. As conversões são baseadas na tabela `CONVERSAO` do banco `Bin/Banco/Banco.db`.
+6. Abra o projeto na pasta `Convertido` com o Delphi 10+ e finalize os ajustes necessários.
+
 ---
 ### Como Contribuir
 Faça um Fork do projeto

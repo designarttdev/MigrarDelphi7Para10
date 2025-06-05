@@ -55,7 +55,24 @@ begin
 end;
 
 procedure TfrPrincipal.btnListarClick(Sender: TObject);
+var
+  F: TSearchRec;
 begin
+  if not DirectoryExists(Trim(edtDiretorio.Text)) then
+  begin
+    Application.MessageBox('Diret\xf3rio inv\xe1lido.', 'Aten\xe7\xe3o!', MB_OK + MB_ICONSTOP);
+    Exit;
+  end;
+
+  if FindFirst(IncludeTrailingPathDelimiter(edtDiretorio.Text) + '*.dpr', faAnyFile, F) <> 0 then
+  begin
+    if Application.MessageBox('N\xe3o foi encontrado nenhum arquivo .dpr no diret\xf3rio informado. Deseja continuar assim mesmo?',
+      'Aten\xe7\xe3o!', MB_YESNO + MB_ICONQUESTION) = IDNO then
+      Exit;
+  end
+  else
+    FindClose(F);
+
   memLista.Lines.Clear;
   SalvarCaminhoPasta(edtDiretorio);
 
