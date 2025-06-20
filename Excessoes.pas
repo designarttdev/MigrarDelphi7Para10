@@ -179,10 +179,13 @@ begin
   dmPrincipal.vQuery.Connection := dmPrincipal.conn;
   dmPrincipal.vQuery.Close;
   dmPrincipal.vQuery.Sql.Clear;
-  dmPrincipal.vQuery.Sql.Add('SELECT max(id) + 1 AS proximonumero FROM conversao;');
+  dmPrincipal.vQuery.Sql.Add('SELECT max(id) + 1 AS proximonumero FROM conversao');
   dmPrincipal.vQuery.Open();
 
-  vProximoNumero := dmPrincipal.vQuery.FieldByName('proximonumero').AsInteger;
+  if (dmPrincipal.vQuery.RecordCount = 1) and (dmPrincipal.vQuery.FieldByName('proximonumero').Value = null) then
+    vProximoNumero := 1
+  else
+    vProximoNumero := dmPrincipal.vQuery.FieldByName('proximonumero').AsInteger;
 
   try
     dmPrincipal.vQuery.Close;
