@@ -111,6 +111,8 @@ object frPrincipal: TfrPrincipal
     Width = 97
     Height = 17
     Caption = 'Apenas ".pas"'
+    Checked = True
+    State = cbChecked
     TabOrder = 7
   end
 end
