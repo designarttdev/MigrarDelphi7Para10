@@ -21,6 +21,8 @@ type
     memoArquivos: TMemo;
     btnSelecionaPasta: TButton;
     btnAdicionar: TButton;
+    chkApenasPAS: TCheckBox;
+    lblContador: TLabel;
     procedure btnAdicionarClick(Sender: TObject);
     procedure btnListarClick(Sender: TObject);
     procedure btnSelecionaPastaClick(Sender: TObject);
@@ -30,6 +32,7 @@ type
     function SelectADirectory(Title: string): string;
     procedure SalvarCaminhoPasta(EditCaminho: TEdit);
     procedure CarregarCaminhoPasta(EditCaminho: TEdit);
+    procedure HabilitaDesabilita(AValor: Boolean);
     { Private declarations }
   public
     { Public declarations }
@@ -76,8 +79,28 @@ begin
   memLista.Lines.Clear;
   SalvarCaminhoPasta(edtDiretorio);
 
-  ListarArquivos(edtDiretorio.Text, chkSub.Checked);
+  try
+    HabilitaDesabilita(False);
+    ListarArquivos(edtDiretorio.Text, chkSub.Checked);
+  finally
+    HabilitaDesabilita(True);
+  end;
 
+end;
+
+procedure TfrPrincipal.HabilitaDesabilita(AValor: Boolean);
+var
+  i: Integer;
+  Obj: TObject;
+begin
+  for i := 0 to Self.ComponentCount - 1 do
+  begin
+    Obj := Self.Components[i];
+    // Garante que o componente é um TControl, para acessar Tag e Enabled
+    if Obj is TControl then
+      if TControl(Obj).Tag = 0 then
+        TControl(Obj).Enabled := AValor;
+  end;
 end;
 
 function TfrPrincipal.SelectADirectory(Title : string) : string;
@@ -125,9 +148,10 @@ var
   sLinha, vHoraFim : String;
   fArq : TStrings;
   I : Integer;
+  iContAlterados: Integer;
   vHoraIni : TDateTime;
 begin
-
+  iContAlterados := 0;
   vHoraIni                  := Now;
   edtDiretorio.Enabled      := False;
   btnListar.Enabled         := False;
@@ -168,7 +192,17 @@ begin
         end
         else
         begin
-          memLista.Lines.Add(Diretorio+'\'+F.Name);
+          if chkApenasPAS.Checked then
+          begin
+            if ExtractFileExt(F.Name).Trim.ToLower <> '.pas'.Trim.ToLower then
+            begin
+              Ret := FindNext(F);
+              Continue;
+            end;
+          end;
+
+//          memLista.Lines.Add(Diretorio+'\'+F.Name);
+          memLista.Lines.Add('...\'+F.Name);
 
 //          if (pos('.pas', Diretorio+'\'+F.Name) > 0) or (pos('.dfm', Diretorio+'\'+F.Name) > 0) then
           if (ExtractFileExt(F.Name) = '.pas') or (ExtractFileExt(F.Name) = '.dfm') then
@@ -233,7 +267,11 @@ begin
             fArq.Free;
           end;
         end;
-          Ret := FindNext(F);
+
+        // Contador dos arquivos alterados
+        Inc(iContAlterados);
+        lblContador.Caption := 'Arquivos alterados: ' + iContAlterados.ToString;
+        Ret := FindNext(F);
       end;
 
     finally

@@ -31,6 +31,14 @@ object frPrincipal: TfrPrincipal
     Height = 13
     Caption = 'Arquivos'
   end
+  object lblContador: TLabel
+    Left = 151
+    Top = 292
+    Width = 314
+    Height = 13
+    AutoSize = False
+    Caption = 'Contador de arquivos alterados'
+  end
   object edtDiretorio: TEdit
     Left = 34
     Top = 53
@@ -46,7 +54,6 @@ object frPrincipal: TfrPrincipal
     Height = 17
     Caption = 'Incluir Subpastas'
     TabOrder = 1
-    Visible = False
   end
   object memLista: TMemo
     Left = 34
@@ -97,5 +104,13 @@ object frPrincipal: TfrPrincipal
     ImageIndex = 0
     TabOrder = 6
     OnClick = btnAdicionarClick
+  end
+  object chkApenasPAS: TCheckBox
+    Left = 154
+    Top = 75
+    Width = 97
+    Height = 17
+    Caption = 'Apenas ".pas"'
+    TabOrder = 7
   end
 end
